@@ -1,31 +1,41 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Xml;
 
 namespace TestReflection
 {    
     internal class Program
     {
-        private static String PATH = 
-            "/Users/vladislavshishov/Documents/src/edu/dotnet/TestReflection/TestReflection/bin/Debug/";
+        private static readonly TestAttributes TEST_ATTRIBUTES = TestAttributes.NewDefault();
         
         public static void Main(string[] args)
         {
-            foreach (var assembly in Utils.GetAssembliesFrom(PATH))
+            if (args.Length < 1)
             {
-                var tmp = Utils.GetTestClassesFrom(assembly, TestAttributes.NewDefault());
-                var testRunner = new TestRunner(tmp, TestAttributes.NewDefault());
-                var result = testRunner.Run();
-                foreach (var pair in result)
+                throw new ArgumentException("Path not specified");
+            }
+            
+            foreach (var assembly in Utils.GetAssembliesFrom(args[0]))
+            {
+                foreach (var type in Utils.GetTestClassesFrom(assembly, TEST_ATTRIBUTES.TestAttribute))
                 {
-                    Console.WriteLine(pair.Value);
-                    Console.WriteLine("\tPASSED: " + pair.Value.Count(res => res.Res == TestResult.Result.Passed));
-                    Console.WriteLine("\tFAILED: " + pair.Value.Count(res => res.Res == TestResult.Result.Failed));
-                    Console.WriteLine("\tSKIPPED: " + pair.Value.Count(res => res.Res == TestResult.Result.Skipped));
+                    var testGroup = TestGroup.NewFrom(type.GetMethods(), TEST_ATTRIBUTES);
+                    var testRunner = new TestRunner(TEST_ATTRIBUTES);
+                    var testResults = testRunner.Run(Activator.CreateInstance(type), testGroup);
+                    PrintTestResults(type, testResults);
                 }
+
             }      
+        }
+
+        private static void PrintTestResults(
+            Type testClass,
+            IEnumerable<TestResultInfo> testResults)
+        {
+            Console.WriteLine($"{testClass.Name}: ");
+            foreach (var testResult in testResults)
+            {
+                Console.WriteLine($"\t{testResult}");
+            }
         }
     }
 }

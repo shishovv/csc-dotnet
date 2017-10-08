@@ -1,36 +1,37 @@
 ﻿using System;
+using TestReflection.Attributes;
 
 namespace TestReflection
 {
     public class TestAttributes
     {
-        public Type BeforeClassAttr { get; }
-        public Type BeforeAttr { get; }
-        public Type TestAttr { get; }
-        public Type AfterAttr { get; }
-        public Type AfterClassAttr { get; }
+        public Type BeforeClassAttribute { get; }
+        public Type BeforeAttribute { get; }
+        public Type TestAttribute { get; }
+        public Type AfterAttribute { get; }
+        public Type AfterClassAttribute { get; }
 
         private TestAttributes(
-            Type beforeClassAttr, 
-            Type beforeAttr, 
-            Type testAttr, 
-            Type afterAttr, 
-            Type afterClassAttr)
+            Type beforeClassAttribute, 
+            Type beforeAttribute, 
+            Type testAttribute, 
+            Type afterAttribute, 
+            Type afterClassAttribute)
         {
-            BeforeClassAttr = beforeClassAttr;
-            BeforeAttr = beforeAttr;
-            TestAttr = testAttr;
-            AfterAttr = afterAttr;
-            AfterClassAttr = afterClassAttr;
+            BeforeClassAttribute = beforeClassAttribute;
+            BeforeAttribute = beforeAttribute;
+            TestAttribute = testAttribute;
+            AfterAttribute = afterAttribute;
+            AfterClassAttribute = afterClassAttribute;
         }
 
         private TestAttributes()
         {
-            BeforeClassAttr = typeof(BeforeClassAttribute);
-            BeforeAttr = typeof(BeforeAttribute);
-            TestAttr = typeof(TestAttribute);
-            AfterAttr = typeof(AfterAttribute);
-            AfterClassAttr = typeof(AfterClassAttribute);
+            BeforeClassAttribute = typeof(BeforeClassAttribute);
+            BeforeAttribute = typeof(BeforeAttribute);
+            TestAttribute = typeof(TestAttribute);
+            AfterAttribute = typeof(AfterAttribute);
+            AfterClassAttribute = typeof(AfterClassAttribute);
         }
 
         public static TestAttributes NewDefault()
@@ -40,11 +41,11 @@ namespace TestReflection
 
         public bool Contains(Type attributeType)
         {
-            return BeforeClassAttr == attributeType
-                   || BeforeAttr == attributeType
-                   || TestAttr == attributeType
-                   || AfterAttr == attributeType
-                   || AfterClassAttr == attributeType;
+            return BeforeClassAttribute == attributeType
+                   || BeforeAttribute == attributeType
+                   || TestAttribute == attributeType
+                   || AfterAttribute == attributeType
+                   || AfterClassAttribute == attributeType;
         }
     }
 }

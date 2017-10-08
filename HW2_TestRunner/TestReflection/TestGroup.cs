@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 
@@ -7,40 +6,45 @@ namespace TestReflection
 {
     public class TestGroup
     {
-        public List<MethodInfo> BeforeClassMethods { get; } = new List<MethodInfo>();
-        public List<MethodInfo> BeforeMethods { get; } = new List<MethodInfo>();
-        public List<MethodInfo> TestMethods { get; } = new List<MethodInfo>();
-        public List<MethodInfo> AfterMethods { get; } = new List<MethodInfo>();
-        public List<MethodInfo> AfterClassMethods { get; } = new List<MethodInfo>();
+        public List<MethodBase> BeforeClassMethods { get; } = new List<MethodBase>();
+        public List<MethodBase> BeforeMethods { get; } = new List<MethodBase>();
+        public List<MethodBase> TestMethods { get; } = new List<MethodBase>();
+        public List<MethodBase> AfterMethods { get; } = new List<MethodBase>();
+        public List<MethodBase> AfterClassMethods { get; } = new List<MethodBase>();
             
-        public TestGroup(
-            IEnumerable<MethodInfo> methods, 
+        private TestGroup(
+            IEnumerable<MethodBase> methods, 
             TestAttributes testAttributes)
         {
             foreach (var method in methods)
             {
-                var attrs = method.GetCustomAttributes().Select(attr => attr.GetType());
-                if (attrs.Contains(testAttributes.BeforeClassAttr))
+                var methodAttributes = method.GetCustomAttributes().Select(attr => attr.GetType()).ToList();
+                if (methodAttributes.Contains(testAttributes.BeforeClassAttribute))
                 {
                     BeforeClassMethods.Add(method);
                 }
-                else if (attrs.Contains(testAttributes.BeforeAttr))
+                else if (methodAttributes.Contains(testAttributes.BeforeAttribute))
                 {
                     BeforeMethods.Add(method);
                 }
-                else if (attrs.Contains(testAttributes.TestAttr))
+                else if (methodAttributes.Contains(testAttributes.TestAttribute))
                 {
                     TestMethods.Add(method);
                 }
-                else if (attrs.Contains(testAttributes.AfterAttr))
+                else if (methodAttributes.Contains(testAttributes.AfterAttribute))
                 {
                     AfterMethods.Add(method);
                 }
-                else if (attrs.Contains(testAttributes.AfterClassAttr))
+                else if (methodAttributes.Contains(testAttributes.AfterClassAttribute))
                 {
                     AfterClassMethods.Add(method);
                 }
             }
+        }
+
+        public static TestGroup NewFrom(IEnumerable<MethodInfo> methods, TestAttributes testAttributes)
+        {
+            return new TestGroup(methods, testAttributes);
         }
 
         public bool IsEmpty()
