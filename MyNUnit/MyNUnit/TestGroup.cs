@@ -1,8 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using MyNUnit;
 
-namespace TestReflection
+namespace MyNUnit
 {
     public class TestGroup
     {
@@ -11,9 +12,9 @@ namespace TestReflection
         public List<MethodBase> TestMethods { get; } = new List<MethodBase>();
         public List<MethodBase> AfterMethods { get; } = new List<MethodBase>();
         public List<MethodBase> AfterClassMethods { get; } = new List<MethodBase>();
-            
+
         private TestGroup(
-            IEnumerable<MethodBase> methods, 
+            IEnumerable<MethodBase> methods,
             TestAttributes testAttributes)
         {
             foreach (var method in methods)

@@ -1,22 +1,22 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace TestReflection
-{    
-    internal class Program
+namespace MyNUnit
+{
+    class MainClass
     {
         private static readonly TestAttributes TEST_ATTRIBUTES = TestAttributes.NewDefault();
-        
+
         public static void Main(string[] args)
         {
             if (args.Length < 1)
             {
                 throw new ArgumentException("Path not specified");
             }
-            
-            foreach (var assembly in Utils.GetAssembliesFrom(args[0]))
+
+            foreach (var assembly in MyNUnit.Utils.Utils.GetAssembliesFrom(args[0]))
             {
-                foreach (var type in Utils.GetTestClassesFrom(assembly, TEST_ATTRIBUTES.TestAttribute))
+                foreach (var type in MyNUnit.Utils.Utils.GetTestClassesFrom(assembly, TEST_ATTRIBUTES.TestAttribute))
                 {
                     var testGroup = TestGroup.NewFrom(type.GetMethods(), TEST_ATTRIBUTES);
                     var testRunner = new TestRunner(TEST_ATTRIBUTES);
@@ -24,7 +24,7 @@ namespace TestReflection
                     PrintTestResults(type, testResults);
                 }
 
-            }      
+            }
         }
 
         private static void PrintTestResults(
@@ -37,5 +37,6 @@ namespace TestReflection
                 Console.WriteLine($"\t{testResult}");
             }
         }
+
     }
 }

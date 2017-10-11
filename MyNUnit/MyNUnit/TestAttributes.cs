@@ -1,7 +1,7 @@
 ﻿using System;
-using TestReflection.Attributes;
+using MyNUnit.Attributes;
 
-namespace TestReflection
+namespace MyNUnit
 {
     public class TestAttributes
     {
@@ -10,20 +10,6 @@ namespace TestReflection
         public Type TestAttribute { get; }
         public Type AfterAttribute { get; }
         public Type AfterClassAttribute { get; }
-
-        private TestAttributes(
-            Type beforeClassAttribute, 
-            Type beforeAttribute, 
-            Type testAttribute, 
-            Type afterAttribute, 
-            Type afterClassAttribute)
-        {
-            BeforeClassAttribute = beforeClassAttribute;
-            BeforeAttribute = beforeAttribute;
-            TestAttribute = testAttribute;
-            AfterAttribute = afterAttribute;
-            AfterClassAttribute = afterClassAttribute;
-        }
 
         private TestAttributes()
         {

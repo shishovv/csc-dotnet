@@ -1,13 +1,12 @@
 ﻿using System;
 
-namespace TestReflection
+namespace MyNUnit
 {
     public class TestResultInfo
     {
-
         public String TestName { get; }
         public TestResult Result { get; }
-        public TimeSpan Time { get;  }
+        public TimeSpan Time { get; }
         public String IgnoreReason { get; }
 
         public TestResultInfo(String testName, TestResult result, long time, String ignoreReason)

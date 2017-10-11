@@ -1,15 +1,14 @@
 ﻿using System;
+using System.Reflection;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 
-namespace TestReflection
+namespace MyNUnit.Utils
 {
     public static class Utils
     {
-        public static IEnumerable<Type>
-            GetTestClassesFrom(Assembly assembly, Type testAttribute)
+        public static IEnumerable<Type> GetTestClassesFrom(Assembly assembly, Type testAttribute)
             => assembly.GetTypes()
                 .Where(type => IsTestClass(type, testAttribute));
 
@@ -21,10 +20,11 @@ namespace TestReflection
                 method.GetCustomAttributes()
                     .Select(attribute => attribute.GetType())
                     .Any(attributeType => attributeType == testAttribute));
-        
+
         public static IEnumerable<Assembly> GetAssembliesFrom(String path) =>
             Directory.EnumerateFiles(path)
                 .Where(file => file.EndsWith(".exe") || file.EndsWith(".dll"))
                 .Select(Assembly.LoadFrom);
     }
+
 }

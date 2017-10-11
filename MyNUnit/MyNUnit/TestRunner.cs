@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Reflection;
-using TestReflection.Attributes;
+using MyNUnit.Attributes;
 
-namespace TestReflection
+namespace MyNUnit
 {
     public class TestRunner
     {
@@ -19,20 +19,20 @@ namespace TestReflection
         public IEnumerable<TestResultInfo> Run(Object testClassInstance, TestGroup testGroup)
         {
             var results = new List<TestResultInfo>();
-            
+
             testGroup.BeforeClassMethods.ForEach(method => method.Invoke(testClassInstance, null));
             testGroup.TestMethods.ForEach(testMethod =>
             {
                 results.Add(RunTest(testClassInstance, testMethod, testGroup.BeforeMethods, testGroup.AfterMethods));
             });
             testGroup.AfterClassMethods.ForEach(method => method.Invoke(testClassInstance, null));
-            
+
             return results;
         }
-        
+
         private TestResultInfo RunTest(
-            Object testClassInstance, 
-            MethodBase testMethod, 
+            Object testClassInstance,
+            MethodBase testMethod,
             IEnumerable<MethodBase> beforeMethods,
             IEnumerable<MethodBase> afterMethods
             )
@@ -41,7 +41,7 @@ namespace TestReflection
             if (testAttr.IgnoreReason != null)
                 return TestResultInfo.CreateNew(testMethod.Name, TestResultInfo.TestResult.Skipped, 0,
                     testAttr.IgnoreReason);
-            
+
             foreach (var beforeMethod in beforeMethods)
             {
                 beforeMethod.Invoke(testClassInstance, null);
@@ -54,27 +54,27 @@ namespace TestReflection
                 testMethod.Invoke(testClassInstance, null);
                 stopWatch.Stop();
                 testResultInfo = TestResultInfo.CreateNew(
-                    testMethod.Name, 
-                    testAttr.ExpectedEceptionType != null 
-                        ? TestResultInfo.TestResult.Failed 
-                        : TestResultInfo.TestResult.Passed, 
+                    testMethod.Name,
+                    testAttr.ExpectedEceptionType != null
+                        ? TestResultInfo.TestResult.Failed
+                        : TestResultInfo.TestResult.Passed,
                     stopWatch.ElapsedMilliseconds);
             }
             catch (Exception e)
             {
                 stopWatch.Stop();
                 testResultInfo = TestResultInfo.CreateNew(
-                    testMethod.Name, 
+                    testMethod.Name,
                     e.InnerException?.GetType() == testAttr.ExpectedEceptionType
-                        ? TestResultInfo.TestResult.Passed 
-                        : TestResultInfo.TestResult.Failed, 
+                        ? TestResultInfo.TestResult.Passed
+                        : TestResultInfo.TestResult.Failed,
                     stopWatch.ElapsedMilliseconds);
             }
             foreach (var afterMethod in afterMethods)
             {
                 afterMethod.Invoke(testClassInstance, null);
             }
-                
+
             return testResultInfo;
         }
     }
