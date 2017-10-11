@@ -7,14 +7,6 @@ namespace MyNUnit
 {
     public class TestRunner
     {
-        private readonly TestAttributes _testAttributes;
-
-        public TestRunner(
-            TestAttributes testAttributes)
-        {
-            _testAttributes = testAttributes;
-        }
-
         public IEnumerable<TestResultInfo> Run(Object testClassInstance, TestGroup testGroup)
         {
             var results = new List<TestResultInfo>();
