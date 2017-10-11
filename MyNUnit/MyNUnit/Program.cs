@@ -19,7 +19,7 @@ namespace MyNUnit
                 foreach (var type in MyNUnit.Utils.Utils.GetTestClassesFrom(assembly, TEST_ATTRIBUTES.TestAttribute))
                 {
                     var testGroup = TestGroup.NewFrom(type.GetMethods(), TEST_ATTRIBUTES);
-                    var testRunner = new TestRunner(TEST_ATTRIBUTES);
+                    var testRunner = new TestRunner();
                     var testResults = testRunner.Run(Activator.CreateInstance(type), testGroup);
                     PrintTestResults(type, testResults);
                 }
