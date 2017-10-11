@@ -1,14 +1,15 @@
 ﻿using NUnit.Framework;
+using System;
 
 namespace Trie.Tests
 {
-    [TestFixture]
-    public class Tests
-    {        
-        [Test]
-        public void TestOperations()
+    [TestFixture()]
+    public class Test
+    {
+        [Test()]
+        public void TestCase()
         {
-            Trie trie = new Trie();
+            ITrie trie = new Trie();
             trie.Add("a");
             trie.Add("ab");
             trie.Add("abc");
@@ -25,7 +26,7 @@ namespace Trie.Tests
             Assert.True(trie.HowManyStartsWithPrefix("abce") == 1);
             Assert.True(trie.HowManyStartsWithPrefix("") == trie.Size());
             Assert.True(trie.Size() == 5);
-            
+
             trie.Remove("abce");
             Assert.True(trie.Size() == 4);
             Assert.True(trie.Contains("a"));
@@ -37,7 +38,7 @@ namespace Trie.Tests
             Assert.True(trie.HowManyStartsWithPrefix("ab") == 3);
             Assert.True(trie.HowManyStartsWithPrefix("abce") == 0);
             Assert.True(trie.HowManyStartsWithPrefix("") == trie.Size());
-            
+
             trie.Add("abce");
             Assert.True(trie.Size() == 5);
             Assert.True(trie.Contains("a"));
@@ -61,6 +62,7 @@ namespace Trie.Tests
             Assert.True(trie.Size() == size);
             trie.Remove("a");
             Assert.True(!trie.Contains("a"));
+
         }
     }
 }
