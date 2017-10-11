@@ -5,9 +5,9 @@ namespace MyNUnit
     {
         bool Ignored();
 
-        String IgnoreReason();
+        String GetIgnoreReason();
 
-        Type ExpectedExceptionType();
+        Type GetExpectedExceptionType();
 
         void Invoke(Object obj, Object[] parameters);
 

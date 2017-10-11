@@ -26,7 +26,7 @@ namespace MyNUnit
                 {
                     results.Add(TestResultInfo.CreateNew(testMethod.GetName(),
                                                          TestResultInfo.TestResult.Skipped,
-                                                         ignoreReason:testMethod.IgnoreReason()));
+                                                         ignoreReason:testMethod.GetIgnoreReason()));
                 }
                 else
                 {
@@ -57,7 +57,7 @@ namespace MyNUnit
                 stopWatch.Stop();
                 return TestResultInfo.CreateNew(
                     testMethod.GetName(),
-                    testMethod.ExpectedExceptionType() != null 
+                    testMethod.GetExpectedExceptionType() != null 
                         ? TestResultInfo.TestResult.Failed
                         : TestResultInfo.TestResult.Passed,
                     stopWatch.ElapsedMilliseconds);
@@ -67,7 +67,7 @@ namespace MyNUnit
                 stopWatch.Stop();
                 return TestResultInfo.CreateNew(
                     testMethod.GetName(),
-                    e.InnerException?.GetType() == testMethod.ExpectedExceptionType()
+                    e.InnerException?.GetType() == testMethod.GetExpectedExceptionType()
                         ? TestResultInfo.TestResult.Passed
                         : TestResultInfo.TestResult.Failed,
                     stopWatch.ElapsedMilliseconds);

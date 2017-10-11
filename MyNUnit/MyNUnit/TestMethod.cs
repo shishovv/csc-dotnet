@@ -18,13 +18,13 @@ namespace MyNUnit
             _expectedExceptionType = expectedExceptionType;
         }
 
-        public Type ExpectedExceptionType() => _expectedExceptionType;
+        public Type GetExpectedExceptionType() => _expectedExceptionType;
 
         public string GetName() => _method.Name;
 
         public bool Ignored() => _ignoreReason != null;
 
-        public string IgnoreReason() => _ignoreReason;
+        public string GetIgnoreReason() => _ignoreReason;
 
         public void Invoke(object obj, object[] parameters) => _method.Invoke(obj, parameters);
     }
