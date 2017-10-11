@@ -56,7 +56,7 @@ namespace MyNUnit
             AfterClassMethods = afterClassMethods.AsReadOnly();
         }
 
-        public static TestGroup NewFrom(IEnumerable<MethodInfo> methods, TestAttributes testAttributes)
+        public static TestGroup NewFrom(IEnumerable<MethodBase> methods, TestAttributes testAttributes)
         {
             return new TestGroup(methods, testAttributes);
         }
