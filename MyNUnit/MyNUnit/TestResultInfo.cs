@@ -17,7 +17,10 @@ namespace MyNUnit
             IgnoreReason = ignoreReason;
         }
 
-        public static TestResultInfo CreateNew(String testName, TestResult res, long time, String ignoreReason = null)
+        public static TestResultInfo CreateNew(String testName, 
+                                               TestResult res, 
+                                               long time = 0, 
+                                               String ignoreReason = null)
         {
             return new TestResultInfo(testName, res, time, ignoreReason);
         }

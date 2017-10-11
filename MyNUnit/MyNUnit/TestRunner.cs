@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Reflection;
-using MyNUnit.Attributes;
 
 namespace MyNUnit
 {
@@ -20,42 +19,45 @@ namespace MyNUnit
         {
             var results = new List<TestResultInfo>();
 
-            testGroup.BeforeClassMethods.ForEach(method => method.Invoke(testClassInstance, null));
-            testGroup.TestMethods.ForEach(testMethod =>
+            InvokeMethods(testGroup.BeforeClassMethods, testClassInstance, null);
+            foreach (var testMethod in testGroup.TestMethods)
             {
-                results.Add(RunTest(testClassInstance, testMethod, testGroup.BeforeMethods, testGroup.AfterMethods));
-            });
-            testGroup.AfterClassMethods.ForEach(method => method.Invoke(testClassInstance, null));
-
+                if (testMethod.Ignored())
+                {
+                    results.Add(TestResultInfo.CreateNew(testMethod.GetName(),
+                                                         TestResultInfo.TestResult.Skipped,
+                                                         ignoreReason:testMethod.IgnoreReason()));
+                }
+                else
+                {
+                    InvokeMethods(testGroup.BeforeMethods, testClassInstance, null);
+                    results.Add(RunTest(testClassInstance, testMethod));
+                    InvokeMethods(testGroup.AfterMethods, testClassInstance, null);
+                }
+            }
+            InvokeMethods(testGroup.AfterClassMethods, testClassInstance, null);
             return results;
         }
 
-        private TestResultInfo RunTest(
-            Object testClassInstance,
-            MethodBase testMethod,
-            IEnumerable<MethodBase> beforeMethods,
-            IEnumerable<MethodBase> afterMethods
-            )
+        private void InvokeMethods(IEnumerable<MethodBase> methods, Object instance, Object[] args)
         {
-            var testAttr = (TestAttribute) testMethod.GetCustomAttribute(_testAttributes.TestAttribute);
-            if (testAttr.IgnoreReason != null)
-                return TestResultInfo.CreateNew(testMethod.Name, TestResultInfo.TestResult.Skipped, 0,
-                    testAttr.IgnoreReason);
-
-            foreach (var beforeMethod in beforeMethods)
+            foreach (var method in methods)
             {
-                beforeMethod.Invoke(testClassInstance, null);
+                method.Invoke(instance, args);
             }
+        }
 
-            TestResultInfo testResultInfo;
+        private TestResultInfo RunTest(Object testClassInstance, 
+                                       ITestMethod testMethod)
+        {
             var stopWatch = Stopwatch.StartNew();
             try
             {
                 testMethod.Invoke(testClassInstance, null);
                 stopWatch.Stop();
-                testResultInfo = TestResultInfo.CreateNew(
-                    testMethod.Name,
-                    testAttr.ExpectedEceptionType != null
+                return TestResultInfo.CreateNew(
+                    testMethod.GetName(),
+                    testMethod.ExpectedExceptionType() != null 
                         ? TestResultInfo.TestResult.Failed
                         : TestResultInfo.TestResult.Passed,
                     stopWatch.ElapsedMilliseconds);
@@ -63,19 +65,13 @@ namespace MyNUnit
             catch (Exception e)
             {
                 stopWatch.Stop();
-                testResultInfo = TestResultInfo.CreateNew(
-                    testMethod.Name,
-                    e.InnerException?.GetType() == testAttr.ExpectedEceptionType
+                return TestResultInfo.CreateNew(
+                    testMethod.GetName(),
+                    e.InnerException?.GetType() == testMethod.ExpectedExceptionType()
                         ? TestResultInfo.TestResult.Passed
                         : TestResultInfo.TestResult.Failed,
                     stopWatch.ElapsedMilliseconds);
             }
-            foreach (var afterMethod in afterMethods)
-            {
-                afterMethod.Invoke(testClassInstance, null);
-            }
-
-            return testResultInfo;
         }
     }
 }
