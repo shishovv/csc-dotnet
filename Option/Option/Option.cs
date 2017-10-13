@@ -39,7 +39,7 @@ namespace Option
             {
                 return true;
             }
-            if (obj == null || !GetType().IsAssignableFrom(obj.GetType()))
+            if (!(obj is Option<T>))
             {
                 return false;
             }
