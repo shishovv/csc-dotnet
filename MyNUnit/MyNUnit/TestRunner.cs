@@ -31,7 +31,7 @@ namespace MyNUnit
             return results;
         }
 
-        private void InvokeMethods(IEnumerable<MethodBase> methods, Object instance, Object[] args)
+        private void InvokeMethods(IEnumerable<IMethod> methods, Object instance, Object[] args)
         {
             foreach (var method in methods)
             {

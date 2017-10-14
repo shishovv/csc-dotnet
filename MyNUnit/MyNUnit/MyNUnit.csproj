@@ -44,15 +44,15 @@
     <Compile Include="Attributes\TestAttribute.cs" />
     <Compile Include="TestRunner.cs" />
     <Compile Include="Utils\Utils.cs" />
-    <Compile Include="TestSamples\DebugTest.cs" />
     <Compile Include="TestMethod.cs" />
     <Compile Include="ITestMethod.cs" />
+    <Compile Include="IMethod.cs" />
+    <Compile Include="MyMethod.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Attributes\" />
     <Folder Include="Attributes\" />
     <Folder Include="Utils\" />
-    <Folder Include="TestSamples\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>

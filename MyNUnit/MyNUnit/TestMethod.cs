@@ -1,5 +1,7 @@
 ﻿using System;
-using System.Reflection; 
+using System.Linq;
+using System.Reflection;
+using System.Collections.Generic;
 
 namespace MyNUnit
 {
@@ -10,13 +12,18 @@ namespace MyNUnit
         private readonly Type _expectedExceptionType;
 
         public TestMethod(MethodBase method, 
-                          String ignoreReason = null, 
-                          Type expectedExceptionType = null)
+                          String ignoreReason, 
+                          Type expectedExceptionType)
         {
             _method = method;
             _ignoreReason = ignoreReason;
             _expectedExceptionType = expectedExceptionType;
         }
+
+        public static TestMethod NewInstance(MethodBase method,
+                                             String ignoreReason = null,
+                                             Type expectedExceptionType = null) =>
+        new TestMethod(method, ignoreReason, expectedExceptionType);
 
         public Type GetExpectedExceptionType() => _expectedExceptionType;
 
@@ -26,6 +33,6 @@ namespace MyNUnit
 
         public string GetIgnoreReason() => _ignoreReason;
 
-        public void Invoke(object obj, object[] parameters) => _method.Invoke(obj, parameters);
+        public void Invoke(Object obj, Object[] parameters) => _method.Invoke(obj, parameters);
     }
 }

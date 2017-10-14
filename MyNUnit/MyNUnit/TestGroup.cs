@@ -2,68 +2,65 @@
 using System.Linq;
 using System.Reflection;
 using MyNUnit.Attributes;
+using System;
 
 namespace MyNUnit
 {
     public class TestGroup
     {
-        public IReadOnlyCollection<MethodBase> BeforeClassMethods { get; }
-        public IReadOnlyCollection<MethodBase> BeforeMethods { get; }
-        public IReadOnlyCollection<ITestMethod> TestMethods { get; }
-        public IReadOnlyCollection<MethodBase> AfterMethods { get; }
-        public IReadOnlyCollection<MethodBase> AfterClassMethods { get; }
+        public IEnumerable<IMethod> BeforeClassMethods { get; }
+        public IEnumerable<IMethod> BeforeMethods { get; }
+        public IEnumerable<ITestMethod> TestMethods { get; }
+        public IEnumerable<IMethod> AfterMethods { get; }
+        public IEnumerable<IMethod> AfterClassMethods { get; }
 
         private TestGroup(
             IEnumerable<MethodBase> methods,
             TestAttributes testAttributes)
         {
-            var beforeClassMethods = new List<MethodBase>();
-            var beforeMethods = new List<MethodBase>();
+            var beforeClassMethods = new List<IMethod>();
+            var beforeMethods = new List<IMethod>();
             var testMethods = new List<ITestMethod>();
-            var afterMethods = new List<MethodBase>();
-            var afterClassMethods = new List<MethodBase>();
+            var afterMethods = new List<IMethod>();
+            var afterClassMethods = new List<IMethod>();
 
             foreach (var method in methods)
             {
-                var methodAttributes = method.GetCustomAttributes().Select(attr => attr.GetType()).ToList();
+                var methodAttributes = method.GetCustomAttributes(true).Select(attr => attr.GetType()).ToList();
                 if (methodAttributes.Contains(testAttributes.BeforeClassAttribute))
                 {
-                    beforeClassMethods.Add(method);
+                    beforeClassMethods.Add(MyMethod.NewInstance(method));
                 }
                 else if (methodAttributes.Contains(testAttributes.BeforeAttribute))
                 {
-                    beforeMethods.Add(method);
+                    beforeMethods.Add(MyMethod.NewInstance(method));
                 }
                 else if (methodAttributes.Contains(testAttributes.TestAttribute))
                 {
-                    var testAttr = (TestAttribute) method.GetCustomAttribute(testAttributes.TestAttribute);
-                    testMethods.Add(new TestMethod(method, testAttr.IgnoreReason, testAttr.ExpectedEceptionType));
+                    var testAttr = (TestAttribute) Attribute.GetCustomAttribute(method,
+                                                                                testAttributes.TestAttribute);
+                    testMethods.Add(TestMethod.NewInstance(method, testAttr.IgnoreReason, testAttr.ExpectedEceptionType));
                 }
                 else if (methodAttributes.Contains(testAttributes.AfterAttribute))
                 {
-                    afterMethods.Add(method);
+                    afterMethods.Add(MyMethod.NewInstance(method));
                 }
                 else if (methodAttributes.Contains(testAttributes.AfterClassAttribute))
                 {
-                    afterClassMethods.Add(method);
+                    afterClassMethods.Add(MyMethod.NewInstance(method));
                 }
             }
 
-            BeforeClassMethods = beforeClassMethods.AsReadOnly();
-            BeforeMethods = beforeMethods.AsReadOnly();
-            TestMethods = testMethods.AsReadOnly();
-            AfterMethods = afterMethods.AsReadOnly();
-            AfterClassMethods = afterClassMethods.AsReadOnly();
+            BeforeClassMethods = beforeClassMethods;
+            BeforeMethods = beforeMethods;
+            TestMethods = testMethods;
+            AfterMethods = afterMethods;
+            AfterClassMethods = afterClassMethods;
         }
 
-        public static TestGroup NewFrom(IEnumerable<MethodBase> methods, TestAttributes testAttributes)
-        {
-            return new TestGroup(methods, testAttributes);
-        }
+        public static TestGroup NewFrom(IEnumerable<MethodBase> methods, TestAttributes testAttributes) =>
+        new TestGroup(methods, testAttributes);
 
-        public bool IsEmpty()
-        {
-            return !TestMethods.Any();
-        }
+        public bool IsEmpty() => !TestMethods.Any();
     }
 }
