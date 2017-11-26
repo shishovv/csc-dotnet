@@ -1,21 +1,27 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading;
 
 namespace HWMultithreading.BlockingQueue
 {
-        public class BlockingArrayQueue<T>: IQueue<T>
+    public class BlockingArrayQueue<T> : IQueue<T>
     {
         private bool _isFull;
         private bool _isEmpty;
         private readonly int _capacity;
         private readonly Queue<T> _queue;
-        
+
         private readonly object _lock = new object();
-        
+
         public BlockingArrayQueue(int capacity)
         {
+            if (capacity == 0)
+            {
+                throw new ArgumentException();
+            }
             _capacity = capacity;
             _queue = new Queue<T>(_capacity);
+            _isEmpty = true;
         }
 
         public void Enqueue(T obj)
@@ -33,19 +39,14 @@ namespace HWMultithreading.BlockingQueue
 
         public bool TryEnqueue(T obj)
         {
-            if (!Monitor.TryEnter(_lock))
+            lock (_lock)
             {
-                return false;
-            }
-            try
-            {
-                if (_isFull) return false;
+                if (_isFull)
+                {
+                    return false;
+                }
                 NotSynchronizedEnqueue(obj);
                 return true;
-            }
-            finally
-            {
-                Monitor.Exit(_lock);
             }
         }
 
@@ -65,12 +66,7 @@ namespace HWMultithreading.BlockingQueue
 
         public bool TryDequeue(out T val)
         {
-            if (!Monitor.TryEnter(_lock))
-            {
-                val = default(T);
-                return false;
-            }
-            try
+            lock (_lock)
             {
                 if (_isEmpty)
                 {
@@ -79,10 +75,6 @@ namespace HWMultithreading.BlockingQueue
                 }
                 val = NotSynchronizedDequeue();
                 return true;
-            }
-            finally
-            {
-                Monitor.Exit(_lock);
             }
         }
 

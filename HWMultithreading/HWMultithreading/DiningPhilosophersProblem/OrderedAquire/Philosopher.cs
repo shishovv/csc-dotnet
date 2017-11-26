@@ -2,8 +2,6 @@
 {
     public class Philosopher
     {
-        private static int EATING_TIME = 2000;
-
         public int Id { get; }
         public int TotalEaten { get; private set; }
         

@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace HWMultithreading
+﻿namespace HWMultithreading
 {
     internal class Program
     {
