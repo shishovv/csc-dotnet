@@ -4,6 +4,8 @@ namespace Option
 {
     public class Option<T>
     {
+        private static readonly Option<T> NONE = new Option<T>(); 
+        
         private readonly T _value;
         private readonly bool _isSome;
 
@@ -21,7 +23,7 @@ namespace Option
 
         public static Option<T> Some(T value) => new Option<T>(value);
 
-        public static Option<T> None() => new Option<T>();
+        public static Option<T> None() => NONE;
 
         public bool IsNone() => !_isSome;
 
@@ -31,9 +33,9 @@ namespace Option
 
         public Option<U> Map<U>(Func<T, U> f) => _isSome ? Option<U>.Some(f.Invoke(_value)) : Option<U>.None();
 
-        public static Option<T> Flatten(Option<Option<T>> wrapper) => wrapper.Value();
+        public static Option<T> Flatten(Option<Option<T>> wrapper) => wrapper.IsNone() ? NONE : wrapper.Value();
 
-        public override bool Equals(Object obj)
+        public override bool Equals(object obj)
         {
             if (this == obj)
             {
