@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace MyNUnit
 {
-    class MainClass
+    internal static class MainClass
     {
         private static readonly TestAttributes TEST_ATTRIBUTES = TestAttributes.NewDefault();
 
@@ -14,9 +14,9 @@ namespace MyNUnit
                 throw new ArgumentException("Path not specified");
             }
 
-            foreach (var assembly in MyNUnit.Utils.Utils.GetAssembliesFrom(args[0]))
+            foreach (var assembly in Utils.Utils.GetAssembliesFrom(args[0]))
             {
-                foreach (var type in MyNUnit.Utils.Utils.GetTestClassesFrom(assembly, TEST_ATTRIBUTES.TestAttribute))
+                foreach (var type in Utils.Utils.GetTestClassesFrom(assembly, TEST_ATTRIBUTES.TestAttribute))
                 {
                     var testGroup = TestGroup.NewFrom(type.GetMethods(), TEST_ATTRIBUTES);
                     var testRunner = new TestRunner();

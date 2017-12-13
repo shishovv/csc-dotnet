@@ -10,7 +10,7 @@ namespace MyNUnit.Tests
     [TestFixture]
     public class TestTestGroup
     {
-        [Test()]
+        [Test]
         public void TestTestGroupInstantiation()
         {
             var testAttrs = TestAttributes.NewDefault();
@@ -26,23 +26,23 @@ namespace MyNUnit.Tests
         {
             var beforeClassMethod = Substitute.For<MethodBase>();
             beforeClassMethod.GetCustomAttributes(Arg.Any<bool>())
-                             .Returns(new Object[] { Activator.CreateInstance(testAttributes.BeforeClassAttribute) });
+                .Returns(new[] { Activator.CreateInstance(testAttributes.BeforeClassAttribute) });
 
             var beforeMethod = Substitute.For<MethodBase>();
             beforeMethod.GetCustomAttributes(Arg.Any<bool>())
-                        .Returns(new Object[] { Activator.CreateInstance(testAttributes.BeforeAttribute) });
+                .Returns(new[] { Activator.CreateInstance(testAttributes.BeforeAttribute) });
 
-            //var testMethod = Substitute.For<MethodBase>();
-            //testMethod.GetCustomAttributes(Arg.Any<bool>())
-            //.Returns(new Object[] { Activator.CreateInstance(testAttributes.TestAttribute) });
+//            var testMethod = Substitute.For<MethodBase>();
+//            testMethod.GetCustomAttributes(Arg.Any<bool>())
+//                .Returns(new Object[] { Activator.CreateInstance(testAttributes.TestAttribute, new object[] {null, null}) });
 
             var afterMethod = Substitute.For<MethodBase>();
             afterMethod.GetCustomAttributes(Arg.Any<bool>())
-                       .Returns(new Object[] { Activator.CreateInstance(testAttributes.AfterAttribute) });
+                .Returns(new[] { Activator.CreateInstance(testAttributes.AfterAttribute) });
 
             var afterClassMethod = Substitute.For<MethodBase>();
             afterClassMethod.GetCustomAttributes(Arg.Any<bool>())
-                            .Returns(new Object[] { Activator.CreateInstance(testAttributes.AfterClassAttribute) });
+                .Returns(new[] { Activator.CreateInstance(testAttributes.AfterClassAttribute) });
 
             return new MethodBase[] {
                 beforeClassMethod,

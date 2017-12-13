@@ -14,6 +14,15 @@ namespace MyNUnit
         public IEnumerable<IMethod> AfterMethods { get; }
         public IEnumerable<IMethod> AfterClassMethods { get; }
 
+        public TestGroup()
+        {
+            BeforeClassMethods = Enumerable.Empty<IMethod>();
+            BeforeMethods = Enumerable.Empty<IMethod>();
+            TestMethods = Enumerable.Empty<ITestMethod>();
+            AfterMethods = Enumerable.Empty<IMethod>();
+            AfterClassMethods = Enumerable.Empty<IMethod>();
+        }
+        
         private TestGroup(
             IEnumerable<MethodBase> methods,
             TestAttributes testAttributes)
@@ -24,30 +33,27 @@ namespace MyNUnit
             var afterMethods = new List<IMethod>();
             var afterClassMethods = new List<IMethod>();
 
+            var attributeProcessMap = new Dictionary<Type, Action<MethodBase>>
+            {
+                {testAttributes.BeforeClassAttribute, method => beforeClassMethods.Add(MyMethod.NewInstance(method))},
+                {testAttributes.BeforeAttribute, method => beforeMethods.Add(MyMethod.NewInstance(method))},
+                {testAttributes.TestAttribute, method =>
+                    {
+                        var testAttr = (TestAttribute) Attribute.GetCustomAttribute(method, testAttributes.TestAttribute);
+                        testMethods.Add(TestMethod.NewInstance(method, testAttr.IgnoreReason, testAttr.ExpectedEceptionType));
+                    }
+                },
+                {testAttributes.AfterAttribute, method => afterMethods.Add(MyMethod.NewInstance(method))},
+                {testAttributes.AfterClassAttribute, method => afterClassMethods.Add(MyMethod.NewInstance(method))}
+            };
+            
             foreach (var method in methods)
             {
-                var methodAttributes = method.GetCustomAttributes(true).Select(attr => attr.GetType()).ToList();
-                if (methodAttributes.Contains(testAttributes.BeforeClassAttribute))
+                foreach (var attribute in method.GetCustomAttributes(true)
+                    .OfType<BaseAttribute>()
+                    .Select(attr => attr.GetType()))
                 {
-                    beforeClassMethods.Add(MyMethod.NewInstance(method));
-                }
-                else if (methodAttributes.Contains(testAttributes.BeforeAttribute))
-                {
-                    beforeMethods.Add(MyMethod.NewInstance(method));
-                }
-                else if (methodAttributes.Contains(testAttributes.TestAttribute))
-                {
-                    var testAttr = (TestAttribute) Attribute.GetCustomAttribute(method,
-                                                                                testAttributes.TestAttribute);
-                    testMethods.Add(TestMethod.NewInstance(method, testAttr.IgnoreReason, testAttr.ExpectedEceptionType));
-                }
-                else if (methodAttributes.Contains(testAttributes.AfterAttribute))
-                {
-                    afterMethods.Add(MyMethod.NewInstance(method));
-                }
-                else if (methodAttributes.Contains(testAttributes.AfterClassAttribute))
-                {
-                    afterClassMethods.Add(MyMethod.NewInstance(method));
+                    attributeProcessMap[attribute].Invoke(method);
                 }
             }
 
@@ -59,8 +65,6 @@ namespace MyNUnit
         }
 
         public static TestGroup NewFrom(IEnumerable<MethodBase> methods, TestAttributes testAttributes) =>
-        new TestGroup(methods, testAttributes);
-
-        public bool IsEmpty() => !TestMethods.Any();
+            new TestGroup(methods, testAttributes);
     }
 }

@@ -1,14 +1,12 @@
 ﻿using System;
 namespace MyNUnit.Attributes
 {
-    public class TestAttribute : Attribute
+    public class TestAttribute : BaseAttribute
     {
         public Type ExpectedEceptionType { get; }
-        public String IgnoreReason { get; }
+        public string IgnoreReason { get; }
 
-        public TestAttribute() {}
-
-        public TestAttribute(Type expectedEceptionType = null, String ignoreReason = null)
+        public TestAttribute(Type expectedEceptionType = null, string ignoreReason = null)
         {
             ExpectedEceptionType = expectedEceptionType;
             IgnoreReason = ignoreReason;

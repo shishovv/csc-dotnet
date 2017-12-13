@@ -1,5 +1,4 @@
-﻿using System;
-using System.Reflection;
+﻿using System.Reflection;
 
 namespace MyNUnit
 {
@@ -14,6 +13,6 @@ namespace MyNUnit
 
         public static MyMethod NewInstance(MethodBase method) => new MyMethod(method);
 
-        public void Invoke(Object obj, Object[] args) => _method.Invoke(obj, args);
+        public void Invoke(object obj, object[] args) => _method.Invoke(obj, args);
     }
 }

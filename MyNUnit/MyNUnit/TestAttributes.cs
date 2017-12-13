@@ -20,18 +20,6 @@ namespace MyNUnit
             AfterClassAttribute = typeof(AfterClassAttribute);
         }
 
-        public static TestAttributes NewDefault()
-        {
-            return new TestAttributes();
-        }
-
-        public bool Contains(Type attributeType)
-        {
-            return BeforeClassAttribute == attributeType
-                   || BeforeAttribute == attributeType
-                   || TestAttribute == attributeType
-                   || AfterAttribute == attributeType
-                   || AfterClassAttribute == attributeType;
-        }
+        public static TestAttributes NewDefault() => new TestAttributes();
     }
 }

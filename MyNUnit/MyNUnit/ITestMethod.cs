@@ -3,12 +3,9 @@ namespace MyNUnit
 {
     public interface ITestMethod : IMethod
     {
-        bool Ignored();
-
-        String GetIgnoreReason();
-
-        Type GetExpectedExceptionType();
-
-        String GetName();
+        bool IsIgnored { get; }
+        string IgnoreReason { get; }
+        Type ExpectedExceptionType { get; }
+        string Name { get; }
     }
 }

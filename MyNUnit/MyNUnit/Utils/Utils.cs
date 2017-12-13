@@ -8,8 +8,8 @@ namespace MyNUnit.Utils
 {
     public static class Utils
     {
-        public static IEnumerable<Type> GetTestClassesFrom(Assembly assembly, Type testAttribute)
-            => assembly.GetTypes()
+        public static IEnumerable<Type> GetTestClassesFrom(Assembly assembly, Type testAttribute) => 
+            assembly.GetTypes()
                 .Where(type => IsTestClass(type, testAttribute));
 
         private static bool IsTestClass(Type type, Type testAttribute) =>
@@ -21,7 +21,7 @@ namespace MyNUnit.Utils
                     .Select(attribute => attribute.GetType())
                     .Any(attributeType => attributeType == testAttribute));
 
-        public static IEnumerable<Assembly> GetAssembliesFrom(String path) =>
+        public static IEnumerable<Assembly> GetAssembliesFrom(string path) =>
             Directory.EnumerateFiles(path)
                 .Where(file => file.EndsWith(".exe") || file.EndsWith(".dll"))
                 .Select(Assembly.LoadFrom);

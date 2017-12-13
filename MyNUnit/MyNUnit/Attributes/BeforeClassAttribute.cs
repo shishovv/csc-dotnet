@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace MyNUnit.Attributes
+﻿namespace MyNUnit.Attributes
 {
-    public class BeforeClassAttribute : Attribute {}
+    public class BeforeClassAttribute : BaseAttribute {}
 }

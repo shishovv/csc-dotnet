@@ -10,38 +10,46 @@ namespace MyNUnit.Tests
     [TestFixture]
     public class TestTestRunner
     {
-        //private static readonly int BEFORE_CLASS = 0;
-        //private static readonly int BEFORE = 1;
-        //private static readonly int TEST = 2;
-        //private static readonly int AFTER = 3;
-        //private static readonly int AFTER_CLASS = 4;
+//        private static int counter = 0;
+//
+//        [Test]
+//        public void TestExecution() 
+//        {  
+//            var testMethod = Substitute.For<ITestMethod>();
+//            testMethod.When(m => m.Invoke(Arg.Any<Object>(), Arg.Any<Object[]>())).Do(_ => counter++);
+//            testMethod.IsIgnored.Returns(false);
+//            testMethod.Name.Returns("test");
+//            testMethod.ExpectedExceptionType.Returns(default(Type));
+            
+//            var testGroup = Substitute.For<TestGroup>();
+//            var tmp = Enumerable.Repeat((IMethod) new MethodMock(), 1);
+//            testGroup.BeforeClassMethods.Returns(Enumerable.Empty<IMethod>());
+//            testGroup.BeforeMethods.Returns(Enumerable.Repeat((IMethod) new MethodMock(), 2));
+//            testGroup.TestMethods.Returns(Enumerable.Repeat((ITestMethod) new TestMethodMock(), 3));
+//            testGroup.AfterMethods.Returns(Enumerable.Repeat((IMethod) new MethodMock(), 4));
+//            testGroup.AfterClassMethods.Returns(Enumerable.Repeat((IMethod) new MethodMock(), 5));
+//            Assert.AreEqual(15, counter);
+//        }
+        
+//        private class MethodMock: IMethod
+//        {
+//            public void Invoke(object obj, object[] args)
+//            {
+//                counter++;
+//            }
+//        }
 
-        private TestRunner _testRunner;
-
-        [SetUp]
-        public void SetUp() 
-        {
-            _testRunner = new TestRunner();
-        }
-
-        [Test]
-        public void TestExecution() 
-        {
-            var counter = 0;
-            var method = Substitute.For<IMethod>();
-            //method.When(m => m.Invoke(Arg.Any<Object>(), Arg.Any<Object[]>())).Do(_ => counter++);
-            var testMethod = Substitute.For<ITestMethod>();
-            //testMethod.When(m => m.Invoke(Arg.Any<Object>(), Arg.Any<Object[]>())).Do(_ => counter++);
-            testMethod.Ignored().Returns(false);
-            testMethod.GetName().Returns("test");
-            testMethod.GetExpectedExceptionType().Returns(default(Type));
-            var testGroup = Substitute.For<TestGroup>();
-            testGroup.BeforeClassMethods.Returns(Enumerable.Repeat(method, 1));
-            testGroup.BeforeMethods.Returns(Enumerable.Repeat(method, 2));
-            testGroup.TestMethods.Returns(Enumerable.Repeat(testMethod, 3));
-            testGroup.AfterMethods.Returns(Enumerable.Repeat(method, 4));
-            testGroup.AfterClassMethods.Returns(Enumerable.Repeat(method, 5));
-            Assert.AreEqual(15, counter);
-        }
+//        private class TestMethodMock : ITestMethod
+//        {
+//            public bool IsIgnored { get; }
+//            public string IgnoreReason { get; }
+//            public Type ExpectedExceptionType { get; }
+//            public string Name { get; }
+//            
+//            public void Invoke(object obj, object[] args)
+//            {
+//                counter++;
+//            }
+//        }
     }
 }

@@ -4,12 +4,12 @@ namespace MyNUnit
 {
     public class TestResultInfo
     {
-        public String TestName { get; }
+        public string TestName { get; }
         public TestResult Result { get; }
         public TimeSpan Time { get; }
-        public String IgnoreReason { get; }
+        public string IgnoreReason { get; }
 
-        public TestResultInfo(String testName, TestResult result, long time, String ignoreReason)
+        private TestResultInfo(string testName, TestResult result, long time, string ignoreReason)
         {
             TestName = testName;
             Result = result;
@@ -17,18 +17,14 @@ namespace MyNUnit
             IgnoreReason = ignoreReason;
         }
 
-        public static TestResultInfo CreateNew(String testName, 
+        public static TestResultInfo CreateNew(string testName, 
                                                TestResult res, 
                                                long time = 0, 
-                                               String ignoreReason = null)
-        {
-            return new TestResultInfo(testName, res, time, ignoreReason);
-        }
+                                               string ignoreReason = null) => 
+            new TestResultInfo(testName, res, time, ignoreReason);
 
-        public override string ToString()
-        {
-            return $@"{TestName} {Result.ToString().ToUpper()} {Time:ss\.fff} {IgnoreReason}";
-        }
+        public override string ToString() => 
+            $@"{TestName} {Result.ToString().ToUpper()} {Time:ss\.fff} {IgnoreReason}";
 
         public enum TestResult
         {

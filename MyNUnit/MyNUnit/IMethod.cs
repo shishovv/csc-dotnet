@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace MyNUnit
+﻿namespace MyNUnit
 {
     public interface IMethod
     {
-        void Invoke(Object obj, Object[] args);
+        void Invoke(object obj, object[] args);
     }
 }
