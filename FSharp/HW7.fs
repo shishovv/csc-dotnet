@@ -20,49 +20,38 @@ module Main =
             | x::xs  -> helper (x::acc) xs
         helper [] lst
 
-    let rec merge = function
-        | ([], l)                -> l
-        | (l, [])                -> l
-        | ((x1::xs1), (x2::xs2)) -> 
-            if x1 <= x2 then x1::(merge (xs1, (x2::xs2)))
-            else x2::(merge ((x1::xs1), xs2))
+    let rec merge lst1 lst2 = 
+        match lst1, lst2 with
+        | [], l                -> l
+        | l, []                -> l
+        | (x1::xs1), (x2::xs2) -> 
+            if x1 <= x2 then x1::(merge xs1 lst2)
+            else x2::(merge lst1 xs2)
 
     let rec mergesort = function
-        | []      -> []
-        | (h::[]) -> [h]
-        | lst     -> 
-            let l = Seq.toList <| Seq.take (Seq.length lst / 2) lst
-            let r = Seq.toList <| Seq.skip (Seq.length l) lst
-            merge ((mergesort l), (mergesort r))
+        | []       -> []
+        | [h] as l -> l
+        | lst      -> 
+            let l = List.take (List.length lst / 2) lst
+            let r = List.skip (List.length l) lst
+            merge (mergesort l) (mergesort r)
 
     type Expr =
-        | Const of int
+        | Con of int
         | Add of Expr * Expr
         | Sub of Expr * Expr
         | Mul of Expr * Expr
         | Div of Expr * Expr
     
     let rec calc = function
-        | Const c -> c
+        | Con c -> c
         | Add (a, b) -> (calc a) + (calc b)
         | Sub (a, b) -> (calc a) - (calc b)
         | Mul (a, b) -> (calc a) * (calc b)
         | Div (a, b) -> (calc a) / (calc b)
 
     let isPrime n = 
-        let rec helper i k = 
-            match i with
-            | i when i * i > k -> true
-            | i when k % i = 0 -> false
-            | i                -> helper (i + 1) k
-        helper 2 n
+        let d = [2 .. float >> sqrt >> int <| n]
+        List.isEmpty <| List.skipWhile (fun e -> n % e <> 0) d
 
-    let primes = 
-        let rec helper cur = seq {
-            match cur with
-                | c when isPrime c -> 
-                    yield c
-                    yield! helper (c + 1)
-                | _ -> yield! helper (cur + 1)
-        }
-        helper 2
+    let primes = Seq.filter isPrime <| Seq.initInfinite (fun e -> e + 1)
