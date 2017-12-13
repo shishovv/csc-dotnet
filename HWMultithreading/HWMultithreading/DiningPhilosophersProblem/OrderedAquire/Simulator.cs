@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace HWMultithreading.DiningPhilosophersProblem.OrderedAquire
 {
@@ -19,19 +20,21 @@ namespace HWMultithreading.DiningPhilosophersProblem.OrderedAquire
         {
             var forks = Enumerable.Range(0, PhilosophersCount).Select(id => new Fork(id)).ToList();
             var philosophers = Enumerable.Range(0, PhilosophersCount)
-                .Select(id => new Philosopher(id, forks.ElementAt(id), forks.ElementAt(id % PhilosophersCount)))
+                .Select(id => new Philosopher(id, forks[id], forks[(id + 1) % PhilosophersCount]))
                 .ToList();
-            var threads = philosophers.Select(philosopher => new Thread(() =>
+            var tokenSource = new CancellationTokenSource();
+            var token = tokenSource.Token;
+            
+            philosophers.ForEach(philosopher => Task.Run(() =>
             {
-                while (true)
+                while (!token.IsCancellationRequested)
                 {
                     philosopher.Eat();
                 }
-            })).ToList();
+            }, token));
             
-            threads.ForEach(thread => thread.Start());
             Thread.Sleep(Time);
-            threads.ForEach(thread => thread.Abort());
+            tokenSource.Dispose();
             
             var totalEaten = philosophers.Select(i => i.TotalEaten).Sum();
             Console.WriteLine($"Total eaten {totalEaten}");

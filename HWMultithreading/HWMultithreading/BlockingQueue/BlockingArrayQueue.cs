@@ -11,17 +11,18 @@ namespace HWMultithreading.BlockingQueue
         private readonly int _capacity;
         private readonly Queue<T> _queue;
 
-        private readonly object _lock = new object();
+        private readonly object _lock;
 
         public BlockingArrayQueue(int capacity)
         {
-            if (capacity == 0)
+            if (capacity <= 0)
             {
                 throw new ArgumentException();
             }
             _capacity = capacity;
             _queue = new Queue<T>(_capacity);
             _isEmpty = true;
+            _lock = new object();
         }
 
         public void Enqueue(T obj)
@@ -33,7 +34,7 @@ namespace HWMultithreading.BlockingQueue
                     Monitor.Wait(_lock);
                 }
                 NotSynchronizedEnqueue(obj);
-                Monitor.PulseAll(_lock);
+                Monitor.Pulse(_lock);
             }
         }
 
@@ -59,7 +60,7 @@ namespace HWMultithreading.BlockingQueue
                     Monitor.Wait(_lock);
                 }
                 var e = NotSynchronizedDequeue();
-                Monitor.PulseAll(_lock);
+                Monitor.Pulse(_lock);
                 return e;
             }
         }

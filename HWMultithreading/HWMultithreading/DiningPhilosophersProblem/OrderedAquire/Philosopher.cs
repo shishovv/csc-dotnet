@@ -5,27 +5,27 @@
         public int Id { get; }
         public int TotalEaten { get; private set; }
         
-        private readonly Fork _fork1;
-        private readonly Fork _fork2;
+        private readonly Fork _forkL;
+        private readonly Fork _forkR;
 
-        public Philosopher(int id, Fork fork1, Fork fork2)
+        public Philosopher(int id, Fork forkL, Fork forkR)
         {
             Id = id;
-            if (fork1.Id < fork2.Id)
+            if (forkL.Id < forkR.Id)
             {
-                _fork1 = fork1;
-                _fork2 = fork2;
+                _forkL = forkL;
+                _forkR = forkR;
             }
             else
             {
-                _fork1 = fork2;
-                _fork2 = fork1;
+                _forkL = forkR;
+                _forkR = forkL;
             }
         }
 
         public void Eat()
         {
-            lock (_fork1) lock (_fork2)
+            lock (_forkL) lock (_forkR)
             {
                 TotalEaten++;
             }
