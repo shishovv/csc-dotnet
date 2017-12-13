@@ -16,17 +16,18 @@ namespace MiniRoguelike
             Hero = hero;
         }
 
-        public void MoveHero(int x, int y)
+        public bool MoveHero(int x, int y)
         {
             if (x < 0 || x >= Board.Count 
                 || y < 0 || y >= Board[0].Count 
                 || Board[x][y].Type != CellType.Free)
             {
-                return;
+                return false;
             }
             
             Hero.X = x;
             Hero.Y = y;
+            return true;
         }
 
         public static GameBoard From(string filePath)
@@ -52,15 +53,15 @@ namespace MiniRoguelike
                 case (char) CellType.Hero:
                     return CellType.Hero;
                 default: 
-                    throw new ArgumentException();
+                    throw new ArgumentException("No cell type for " + c);
             }
         }
         
         public class Cell
         {
-            public int X { get; internal set; }
-            public int Y { get; internal set; }
-            public CellType Type { get; internal set; }
+            public int X { get; set; }
+            public int Y { get; set; }
+            public CellType Type { get; set; }
 
             public Cell(int x, int y, CellType type)
             {

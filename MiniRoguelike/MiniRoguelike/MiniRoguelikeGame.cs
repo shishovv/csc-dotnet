@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Security;
 
 namespace MiniRoguelike
 {
@@ -14,41 +15,96 @@ namespace MiniRoguelike
         public void Play()
         {
             var eventLoop = new EventLoop();
-            eventLoop.UpHandler += MoveUp;
-            eventLoop.DownHandler += MoveDown;
-            eventLoop.LeftHandler += MoveLeft;
-            eventLoop.RightHandler += MoveRight;
-            eventLoop.EscHandler += Console.Clear;
+            eventLoop.MoveHandler += Move;
+            eventLoop.ExitHandler += Console.Clear;
             
-            Redraw();
+            ConsoleCancelEventHandler cancelEventHandler = (a, b) => Console.Clear();
+            Console.CancelKeyPress += cancelEventHandler;
+            
+            Draw();
+            try
+            {
+                Console.CursorVisible = false;
+            }
+            catch (SecurityException e)
+            {
+                // ignore
+            }
+            
             eventLoop.Run();
+            
+            eventLoop.MoveHandler -= Move;
+            eventLoop.ExitHandler -= Console.Clear;
+            Console.CancelKeyPress -= cancelEventHandler;
         }
         
+        private void Move(Direction direction)
+        {
+            switch (direction)
+            {
+                case Direction.Up:
+                    MoveUp();
+                    break;
+                case Direction.Down:
+                    MoveDown();
+                    break;
+                case Direction.Left:
+                    MoveLeft();
+                    break;
+                case Direction.Right:
+                    MoveRight();
+                    break;
+            }
+        }
+
         private void MoveRight()
         {
-            _board.MoveHero(_board.Hero.X, _board.Hero.Y + 1);
-            Redraw();
+            if (_board.MoveHero(_board.Hero.X, _board.Hero.Y + 1))
+            {
+                Redraw((_board.Hero.X, _board.Hero.Y - 1));
+            }
         }
         
         private void MoveLeft()
         {
-            _board.MoveHero(_board.Hero.X, _board.Hero.Y - 1);
-            Redraw();
+            if (_board.MoveHero(_board.Hero.X, _board.Hero.Y - 1))
+            {
+                Redraw((_board.Hero.X, _board.Hero.Y + 1));
+            }
         }
         
         private void MoveUp()
         {
-            _board.MoveHero(_board.Hero.X - 1, _board.Hero.Y);
-            Redraw();
+            if (_board.MoveHero(_board.Hero.X - 1, _board.Hero.Y))
+            {
+                Redraw((_board.Hero.X + 1, _board.Hero.Y));
+            }
         }
 
         private void MoveDown()
         {
-            _board.MoveHero(_board.Hero.X + 1, _board.Hero.Y);
-            Redraw();
+            if (_board.MoveHero(_board.Hero.X + 1, _board.Hero.Y))
+            {
+                Redraw((_board.Hero.X - 1, _board.Hero.Y));
+            }
         }
 
-        private void Redraw()
+        private void Redraw(params ValueTuple<int, int>[] cells)
+        {
+            foreach (var cell in cells)
+            {
+                DrawAt(cell.Item1, cell.Item2, (char) _board.Board[cell.Item1][cell.Item2].Type);
+            }
+            DrawAt(_board.Hero.X, _board.Hero.Y, (char) _board.Hero.Type);
+        }
+
+        private void DrawAt(int x, int y, char c)
+        {
+            Console.SetCursorPosition(y, x);
+            Console.Write(c);
+        }
+        
+        private void Draw()
         {
             Console.Clear();
             foreach (var row in _board.Board)

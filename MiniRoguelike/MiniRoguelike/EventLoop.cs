@@ -4,34 +4,35 @@ namespace MiniRoguelike
 {
     public class EventLoop
     {
-        public event Action UpHandler;
-        public event Action DownHandler;
-        public event Action LeftHandler;
-        public event Action RightHandler;
-        public event Action EscHandler;
+        public event Action<Direction> MoveHandler;
+        public event Action ExitHandler;
 
         public void Run()
         {
-            while (true)
+            var key = ConsoleKey.F24;
+            while (key != ConsoleKey.Escape)
             {
-                var key = Console.ReadKey();
-                switch (key.Key)
+                if (Console.KeyAvailable)
                 {
-                    case ConsoleKey.UpArrow:
-                        UpHandler?.Invoke();
-                        break;
-                    case ConsoleKey.DownArrow:
-                        DownHandler?.Invoke();
-                        break;
-                    case ConsoleKey.LeftArrow:
-                        LeftHandler?.Invoke();
-                        break;
-                    case ConsoleKey.RightArrow:
-                        RightHandler?.Invoke();
-                        break;
-                    case ConsoleKey.Escape:
-                        EscHandler?.Invoke();
-                        return;
+                    key = Console.ReadKey().Key;
+                    switch (key)
+                    {
+                        case ConsoleKey.UpArrow:
+                            MoveHandler?.Invoke(Direction.Up);
+                            break;
+                        case ConsoleKey.DownArrow:
+                            MoveHandler?.Invoke(Direction.Down);
+                            break;
+                        case ConsoleKey.LeftArrow:
+                            MoveHandler?.Invoke(Direction.Left);
+                            break;
+                        case ConsoleKey.RightArrow:
+                            MoveHandler?.Invoke(Direction.Right);
+                            break;
+                        case ConsoleKey.Escape:
+                            ExitHandler?.Invoke();
+                            break;
+                    }
                 }
             }
         }
